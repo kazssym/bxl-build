@@ -21,7 +21,13 @@ jobs:
           repository: microsoft/BuildXL
           path: BuildXL
 
-      - name: List files
-        shell: bash
+      # - name: List files
+      #   shell: bash
+      #   run: |
+      #     ls -la
+
+      - name: Run bxl.cmd
         run: |
-          ls -la
+          ./bxl.cmd -minimal
+        working-directory: ./BuildXL
+        shell: pwsh
