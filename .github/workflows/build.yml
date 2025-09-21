@@ -15,6 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Checkout microsoft/BuildXL
+        uses: actions/checkout@v5
+        with:
+          repository: microsoft/BuildXL
+          path: BuildXL
+
       - name: List files
         shell: bash
         run: |
