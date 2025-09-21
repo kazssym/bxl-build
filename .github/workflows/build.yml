@@ -8,6 +8,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  # Path to the NuGet global-packages folder.
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
 jobs:
   build:
     runs-on: windows-2022
@@ -20,6 +24,14 @@ jobs:
         with:
           repository: microsoft/BuildXL
           path: BuildXL
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.dsc') }}
+          path: ${{ env.NUGET_PACKAGES }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
       # - name: List files
       #   shell: bash
