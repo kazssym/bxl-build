@@ -8,6 +8,12 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  # Path to the NuGet global-packages folder.
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
+  DOMINO_CACHE_DIRECTORY: ${{ github.workspace }}/.bxlcache
+
 jobs:
   build:
     runs-on: windows-2022
@@ -21,7 +27,40 @@ jobs:
           repository: microsoft/BuildXL
           path: BuildXL
 
-      - name: List files
-        shell: bash
+      - name: Create USN journal
         run: |
-          ls -la
+          fsutil usn createjournal m=0x20000000 a=0x8000000 D:
+
+      # - name: Cache NuGet packages
+      #   uses: actions/cache@v4
+      #   with:
+      #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.dsc') }}
+      #     path: ${{ env.NUGET_PACKAGES }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-nuget-
+
+      - name: Cache BuildXL
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-buildxl-${{ hashFiles('**/*.dsc') }}
+          path: ${{ env.DOMINO_CACHE_DIRECTORY }}
+          # path: ./BuildXL/Out/Cache
+          restore-keys: |
+            ${{ runner.os }}-buildxl-
+
+      - name: Find the MSVC version
+        run: |
+          ./Find-MsvcVersion.ps1
+        shell: pwsh
+
+      - name: Run bxl.cmd
+        run: |
+          ./bxl.cmd -minimal
+        working-directory: ./BuildXL
+        shell: pwsh
+
+      - name: Upload outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: bin
+          path: ./BuildXL/Out/Bin
