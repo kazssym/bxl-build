@@ -31,13 +31,13 @@ jobs:
         run: |
           fsutil usn createjournal m=0x20000000 a=0x8000000 D:
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.dsc') }}
-          path: ${{ env.NUGET_PACKAGES }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+      # - name: Cache NuGet packages
+      #   uses: actions/cache@v4
+      #   with:
+      #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.dsc') }}
+      #     path: ${{ env.NUGET_PACKAGES }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-nuget-
 
       - name: Cache BuildXL
         uses: actions/cache@v4
