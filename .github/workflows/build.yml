@@ -38,6 +38,10 @@ jobs:
       #   run: |
       #     ls -la
 
+      - name: Create USN journal
+        run: |
+          fsutil usn createjournal m=0x20000000 a=0x8000000 .
+
       - name: Run bxl.cmd
         run: |
           ./bxl.cmd -minimal
