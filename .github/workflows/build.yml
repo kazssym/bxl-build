@@ -55,7 +55,7 @@ jobs:
 
       - name: Run bxl.cmd
         run: |
-          ./bxl.cmd -release
+          ./bxl.cmd -deployconfig Release
         working-directory: ./BuildXL
         shell: pwsh
 
