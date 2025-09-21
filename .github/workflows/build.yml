@@ -12,7 +12,7 @@ env:
   # Path to the NuGet global-packages folder.
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
-  BUILDXL_CACHE_DIRECTORY: ${{ github.workspace }}/.bxlcache
+  DOMINO_CACHE_DIRECTORY: ${{ github.workspace }}/.bxlcache
 
 jobs:
   build:
@@ -43,8 +43,8 @@ jobs:
         uses: actions/cache@v4
         with:
           key: ${{ runner.os }}-buildxl-${{ hashFiles('**/*.dsc') }}
-          # path: ${{ env.BUILDXL_CACHE_DIRECTORY }}
-          path: ./BuildXL/Out/Cache
+          path: ${{ env.DOMINO_CACHE_DIRECTORY }}
+          # path: ./BuildXL/Out/Cache
           restore-keys: |
             ${{ runner.os }}-buildxl-
 
