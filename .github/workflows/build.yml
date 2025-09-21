@@ -38,6 +38,11 @@ jobs:
       #   run: |
       #     ls -la
 
+      - name: Find the MSVC version
+        run: |
+          ./Find-MsvcVersion.ps1
+        shell: pwsh
+
       - run: |
           echo $env:MSVC_VERSION
         shell: pwsh
