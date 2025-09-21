@@ -14,3 +14,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+
+      - name: List files
+        shell: bash
+        run: |
+          ls -la
