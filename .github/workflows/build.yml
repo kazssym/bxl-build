@@ -1,4 +1,4 @@
----
+de---
 name: Build
 
 on:
@@ -66,5 +66,5 @@ jobs:
       - name: Upload outputs
         uses: actions/upload-artifact@v4
         with:
-          name: bin
+          name: selfhost
           path: ./BuildXL/Out/Selfhost
