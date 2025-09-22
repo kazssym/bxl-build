@@ -135,33 +135,26 @@ jobs:
           }
 
           # Create a README for the artifact
-          $readmeContent = @"
-# BuildXL Essential Binary Distribution
-
-This artifact contains only the essential files from the BuildXL build:
-
-## Main Executables
-- bxl.exe - Main BuildXL executable
-- bxlanalyzer.exe - BuildXL analyzer tool
-
-## Core Libraries
-- Essential DLL files required for BuildXL operation
-- Configuration files (*.config, *.json)
-
-## What's Excluded
-- Debug symbols (*.pdb files)
-- Test executables and libraries
-- Documentation files
-- Intermediate build artifacts
-
-## Size Optimization
-- Original artifact size: $originalSizeMB MB
-- Optimized artifact size: $essentialSizeMB MB  
-- Size reduction: $reductionPercent%
-
-Generated: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss UTC")
-"@
-          Set-Content -Path "$essentialDir/README.md" -Value $readmeContent -Encoding UTF8
+          $readme = "# BuildXL Essential Binary Distribution`n`n"
+          $readme += "This artifact contains only the essential files from the BuildXL build:`n`n"
+          $readme += "## Main Executables`n"
+          $readme += "- bxl.exe - Main BuildXL executable`n"
+          $readme += "- bxlanalyzer.exe - BuildXL analyzer tool`n`n"
+          $readme += "## Core Libraries`n"
+          $readme += "- Essential DLL files required for BuildXL operation`n"
+          $readme += "- Configuration files (*.config, *.json)`n`n"
+          $readme += "## What's Excluded`n"
+          $readme += "- Debug symbols (*.pdb files)`n"
+          $readme += "- Test executables and libraries`n"
+          $readme += "- Documentation files`n"
+          $readme += "- Intermediate build artifacts`n`n"
+          $readme += "## Size Optimization`n"
+          $readme += "- Original artifact size: $originalSizeMB MB`n"
+          $readme += "- Optimized artifact size: $essentialSizeMB MB`n"
+          $readme += "- Size reduction: $reductionPercent%`n`n"
+          $readme += "Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss UTC')`n"
+          
+          Set-Content -Path "$essentialDir/README.md" -Value $readme -Encoding UTF8
           Write-Host "Created README.md in artifact"
         shell: pwsh
 
