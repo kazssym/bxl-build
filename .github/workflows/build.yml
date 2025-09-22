@@ -59,7 +59,7 @@ jobs:
 
       - name: Run bxl.cmd
         run: |
-          ./bxl.cmd -deployconfig Release -minimal
+          ./bxl.cmd -deployconfig Release -deploydev
         working-directory: ./BuildXL
         shell: pwsh
 
