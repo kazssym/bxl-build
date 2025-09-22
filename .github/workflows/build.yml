@@ -70,22 +70,47 @@ jobs:
           New-Item -ItemType Directory -Force -Path $essentialDir
 
           # Copy only essential executables and core libraries
-          Copy-Item "./BuildXL/Out/Bin/bxl.exe" -Destination $essentialDir `
-            -ErrorAction SilentlyContinue
-          Copy-Item "./BuildXL/Out/Bin/bxlanalyzer.exe" -Destination $essentialDir `
-            -ErrorAction SilentlyContinue
+          $executables = @("bxl.exe", "bxlanalyzer.exe")
+          foreach ($exe in $executables) {
+            $sourcePath = "./BuildXL/Out/Bin/$exe"
+            if (Test-Path $sourcePath) {
+              Copy-Item $sourcePath -Destination $essentialDir
+              Write-Host "Copied $exe"
+            } else {
+              Write-Warning "Executable $exe not found at $sourcePath"
+            }
+          }
 
           # Copy essential DLLs (excluding test files and PDBs)
-          Get-ChildItem "./BuildXL/Out/Bin/*.dll" | Where-Object {
-            $_.Name -notlike "*Test*" -and $_.Name -notlike "*test*" `
-              -and $_.Name -notlike "*UnitTest*"
-          } | Copy-Item -Destination $essentialDir
+          $dllCount = 0
+          Get-ChildItem "./BuildXL/Out/Bin/*.dll" -ErrorAction SilentlyContinue | `
+            Where-Object {
+              $_.Name -notlike "*Test*" -and $_.Name -notlike "*test*" `
+                -and $_.Name -notlike "*UnitTest*"
+            } | ForEach-Object {
+              Copy-Item $_.FullName -Destination $essentialDir
+              $dllCount++
+            }
+          Write-Host "Copied $dllCount essential DLL files"
 
-          # Copy configuration files
-          Get-ChildItem "./BuildXL/Out/Bin/*.config" | `
-            Copy-Item -Destination $essentialDir -ErrorAction SilentlyContinue
-          Get-ChildItem "./BuildXL/Out/Bin/*.json" | `
-            Copy-Item -Destination $essentialDir -ErrorAction SilentlyContinue
+          # Copy configuration files and other essential files
+          $configCount = 0
+          @("*.config", "*.json", "*.xml") | ForEach-Object {
+            Get-ChildItem "./BuildXL/Out/Bin/$_" -ErrorAction SilentlyContinue | `
+              ForEach-Object {
+                Copy-Item $_.FullName -Destination $essentialDir
+                $configCount++
+              }
+          }
+          
+          # Also copy any .dsc files (BuildXL domain-specific config files)
+          Get-ChildItem "./BuildXL/Out/Bin/*.dsc" -ErrorAction SilentlyContinue | `
+            ForEach-Object {
+              Copy-Item $_.FullName -Destination $essentialDir
+              $configCount++
+            }
+            
+          Write-Host "Copied $configCount configuration files"
 
           # Show size comparison
           $originalSize = (Get-ChildItem "./BuildXL/Out/Bin" -Recurse | `
@@ -93,10 +118,51 @@ jobs:
           $essentialSize = (Get-ChildItem $essentialDir -Recurse | `
             Measure-Object -Property Length -Sum).Sum
 
-          Write-Host "Original size: $([math]::Round($originalSize/1MB, 2)) MB"
-          Write-Host "Essential size: $([math]::Round($essentialSize/1MB, 2)) MB"
-          Write-Host "Size reduction: " `
-            "$([math]::Round(($originalSize - $essentialSize)/$originalSize * 100, 1))%"
+          $originalSizeMB = [math]::Round($originalSize/1MB, 2)
+          $essentialSizeMB = [math]::Round($essentialSize/1MB, 2)
+          $reductionPercent = [math]::Round(($originalSize - $essentialSize)/$originalSize * 100, 1)
+
+          Write-Host "====== ARTIFACT SIZE COMPARISON ======"
+          Write-Host "Original size: $originalSizeMB MB"
+          Write-Host "Essential size: $essentialSizeMB MB"
+          Write-Host "Size reduction: $reductionPercent%"
+          Write-Host "======================================="
+
+          # List what was included
+          Write-Host "Essential files included:"
+          Get-ChildItem $essentialDir | ForEach-Object {
+            Write-Host "  - $($_.Name)"
+          }
+
+          # Create a README for the artifact
+          $readmeContent = @"
+# BuildXL Essential Binary Distribution
+
+This artifact contains only the essential files from the BuildXL build:
+
+## Main Executables
+- bxl.exe - Main BuildXL executable
+- bxlanalyzer.exe - BuildXL analyzer tool
+
+## Core Libraries
+- Essential DLL files required for BuildXL operation
+- Configuration files (*.config, *.json)
+
+## What's Excluded
+- Debug symbols (*.pdb files)
+- Test executables and libraries
+- Documentation files
+- Intermediate build artifacts
+
+## Size Optimization
+- Original artifact size: $originalSizeMB MB
+- Optimized artifact size: $essentialSizeMB MB  
+- Size reduction: $reductionPercent%
+
+Generated: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss UTC")
+"@
+          Set-Content -Path "$essentialDir/README.md" -Value $readmeContent -Encoding UTF8
+          Write-Host "Created README.md in artifact"
         shell: pwsh
 
       - name: Upload outputs
