@@ -39,3 +39,6 @@
 
 # debug information files
 *.dwo
+
+# BuildXL repository (cloned during CI)
+BuildXL/
