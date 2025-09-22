@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: microsoft/BuildXL
-          ref: Prod-buildxl.0.1.0-20210903.0 
+          ref: Prod-buildxl.0.1.0-20240601.0 # Updated to latest stable BuildXL release as of June 2024
           path: BuildXL
 
       - name: Create USN journal
