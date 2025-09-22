@@ -59,12 +59,12 @@ jobs:
 
       - name: Run bxl.cmd
         run: |
-          ./bxl.cmd -deployconfig Release -minimal
+          ./bxl.cmd -deployconfig Release -deploydev
         working-directory: ./BuildXL
         shell: pwsh
 
       - name: Upload outputs
         uses: actions/upload-artifact@v4
         with:
-          name: bin
-          path: ./BuildXL/Out/Bin
+          name: selfhost
+          path: ./BuildXL/Out/Selfhost
