@@ -63,8 +63,44 @@ jobs:
         working-directory: ./BuildXL
         shell: pwsh
 
+      - name: Prepare essential artifacts
+        run: |
+          # Create a temporary directory for essential files
+          $essentialDir = "./BuildXL/Out/Essential"
+          New-Item -ItemType Directory -Force -Path $essentialDir
+
+          # Copy only essential executables and core libraries
+          Copy-Item "./BuildXL/Out/Bin/bxl.exe" -Destination $essentialDir `
+            -ErrorAction SilentlyContinue
+          Copy-Item "./BuildXL/Out/Bin/bxlanalyzer.exe" -Destination $essentialDir `
+            -ErrorAction SilentlyContinue
+
+          # Copy essential DLLs (excluding test files and PDBs)
+          Get-ChildItem "./BuildXL/Out/Bin/*.dll" | Where-Object {
+            $_.Name -notlike "*Test*" -and $_.Name -notlike "*test*" `
+              -and $_.Name -notlike "*UnitTest*"
+          } | Copy-Item -Destination $essentialDir
+
+          # Copy configuration files
+          Get-ChildItem "./BuildXL/Out/Bin/*.config" | `
+            Copy-Item -Destination $essentialDir -ErrorAction SilentlyContinue
+          Get-ChildItem "./BuildXL/Out/Bin/*.json" | `
+            Copy-Item -Destination $essentialDir -ErrorAction SilentlyContinue
+
+          # Show size comparison
+          $originalSize = (Get-ChildItem "./BuildXL/Out/Bin" -Recurse | `
+            Measure-Object -Property Length -Sum).Sum
+          $essentialSize = (Get-ChildItem $essentialDir -Recurse | `
+            Measure-Object -Property Length -Sum).Sum
+
+          Write-Host "Original size: $([math]::Round($originalSize/1MB, 2)) MB"
+          Write-Host "Essential size: $([math]::Round($essentialSize/1MB, 2)) MB"
+          Write-Host "Size reduction: " `
+            "$([math]::Round(($originalSize - $essentialSize)/$originalSize * 100, 1))%"
+        shell: pwsh
+
       - name: Upload outputs
         uses: actions/upload-artifact@v4
         with:
           name: bin
-          path: ./BuildXL/Out/Bin
+          path: ./BuildXL/Out/Essential
