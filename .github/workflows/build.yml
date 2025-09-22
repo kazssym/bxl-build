@@ -63,8 +63,103 @@ jobs:
         working-directory: ./BuildXL
         shell: pwsh
 
+      - name: Prepare essential artifacts
+        run: |
+          # Create a temporary directory for essential files
+          $essentialDir = "./BuildXL/Out/Essential"
+          New-Item -ItemType Directory -Force -Path $essentialDir
+
+          # Copy only essential executables and core libraries
+          $executables = @("bxl.exe", "bxlanalyzer.exe")
+          foreach ($exe in $executables) {
+            $sourcePath = "./BuildXL/Out/Bin/$exe"
+            if (Test-Path $sourcePath) {
+              Copy-Item $sourcePath -Destination $essentialDir
+              Write-Host "Copied $exe"
+            } else {
+              Write-Warning "Executable $exe not found at $sourcePath"
+            }
+          }
+
+          # Copy essential DLLs (excluding test files and PDBs)
+          $dllCount = 0
+          Get-ChildItem "./BuildXL/Out/Bin/*.dll" -ErrorAction SilentlyContinue | `
+            Where-Object {
+              $_.Name -notlike "*Test*" -and $_.Name -notlike "*test*" `
+                -and $_.Name -notlike "*UnitTest*"
+            } | ForEach-Object {
+              Copy-Item $_.FullName -Destination $essentialDir
+              $dllCount++
+            }
+          Write-Host "Copied $dllCount essential DLL files"
+
+          # Copy configuration files and other essential files
+          $configCount = 0
+          @("*.config", "*.json", "*.xml") | ForEach-Object {
+            Get-ChildItem "./BuildXL/Out/Bin/$_" -ErrorAction SilentlyContinue | `
+              ForEach-Object {
+                Copy-Item $_.FullName -Destination $essentialDir
+                $configCount++
+              }
+          }
+          
+          # Also copy any .dsc files (BuildXL domain-specific config files)
+          Get-ChildItem "./BuildXL/Out/Bin/*.dsc" -ErrorAction SilentlyContinue | `
+            ForEach-Object {
+              Copy-Item $_.FullName -Destination $essentialDir
+              $configCount++
+            }
+            
+          Write-Host "Copied $configCount configuration files"
+
+          # Show size comparison
+          $originalSize = (Get-ChildItem "./BuildXL/Out/Bin" -Recurse | `
+            Measure-Object -Property Length -Sum).Sum
+          $essentialSize = (Get-ChildItem $essentialDir -Recurse | `
+            Measure-Object -Property Length -Sum).Sum
+
+          $originalSizeMB = [math]::Round($originalSize/1MB, 2)
+          $essentialSizeMB = [math]::Round($essentialSize/1MB, 2)
+          $reductionPercent = [math]::Round(($originalSize - $essentialSize)/$originalSize * 100, 1)
+
+          Write-Host "====== ARTIFACT SIZE COMPARISON ======"
+          Write-Host "Original size: $originalSizeMB MB"
+          Write-Host "Essential size: $essentialSizeMB MB"
+          Write-Host "Size reduction: $reductionPercent%"
+          Write-Host "======================================="
+
+          # List what was included
+          Write-Host "Essential files included:"
+          Get-ChildItem $essentialDir | ForEach-Object {
+            Write-Host "  - $($_.Name)"
+          }
+
+          # Create a README for the artifact
+          $readme = "# BuildXL Essential Binary Distribution`n`n"
+          $readme += "This artifact contains only the essential files from the BuildXL build:`n`n"
+          $readme += "## Main Executables`n"
+          $readme += "- bxl.exe - Main BuildXL executable`n"
+          $readme += "- bxlanalyzer.exe - BuildXL analyzer tool`n`n"
+          $readme += "## Core Libraries`n"
+          $readme += "- Essential DLL files required for BuildXL operation`n"
+          $readme += "- Configuration files (*.config, *.json)`n`n"
+          $readme += "## What's Excluded`n"
+          $readme += "- Debug symbols (*.pdb files)`n"
+          $readme += "- Test executables and libraries`n"
+          $readme += "- Documentation files`n"
+          $readme += "- Intermediate build artifacts`n`n"
+          $readme += "## Size Optimization`n"
+          $readme += "- Original artifact size: $originalSizeMB MB`n"
+          $readme += "- Optimized artifact size: $essentialSizeMB MB`n"
+          $readme += "- Size reduction: $reductionPercent%`n`n"
+          $readme += "Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss UTC')`n"
+          
+          Set-Content -Path "$essentialDir/README.md" -Value $readme -Encoding UTF8
+          Write-Host "Created README.md in artifact"
+        shell: pwsh
+
       - name: Upload outputs
         uses: actions/upload-artifact@v4
         with:
           name: bin
-          path: ./BuildXL/Out/Bin
+          path: ./BuildXL/Out/Essential
