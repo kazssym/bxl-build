@@ -32,6 +32,8 @@ jobs:
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "8"
 
       - name: Create USN journal
         run: |
