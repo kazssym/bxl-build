@@ -30,7 +30,7 @@ jobs:
           repository: microsoft/BuildXL
           path: BuildXL
 
-      - name Setup .NET
+      - name: Setup .NET
         uses: actions/setup-dotnet@v5
 
       - name: Create USN journal
