@@ -30,6 +30,9 @@ jobs:
           repository: microsoft/BuildXL
           path: BuildXL
 
+      - name Setup .NET
+        uses: actions/setup-dotnet@v5
+
       - name: Create USN journal
         run: |
           fsutil usn createjournal m=0x20000000 a=0x8000000 D:
