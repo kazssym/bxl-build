@@ -68,3 +68,9 @@ jobs:
         with:
           name: selfhost
           path: ./BuildXL/Out/Selfhost
+
+      - name: Upload cache
+        uses: actions/upload-artifact@v4
+        with:
+          name: cache
+          path: $(DOMINO_CACHE_DIRECTORY)
