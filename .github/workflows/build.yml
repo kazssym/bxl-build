@@ -44,6 +44,7 @@ jobs:
 
       - name: Cache BuildXL
         uses: actions/cache@v4
+        if: ${{ false }}
         with:
           key: ${{ runner.os }}-buildxl-release-${{ hashFiles('**/*.dsc') }}
           path: ${{ env.DOMINO_CACHE_DIRECTORY }}
