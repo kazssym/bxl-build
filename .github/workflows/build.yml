@@ -7,6 +7,8 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  schedule:
+    - cron: "30 5 * * 6"
 
 env:
   # Path to the NuGet global-packages folder.
@@ -19,7 +21,8 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
 
       - name: Checkout microsoft/BuildXL
         uses: actions/checkout@v5
@@ -42,10 +45,11 @@ jobs:
       - name: Cache BuildXL
         uses: actions/cache@v4
         with:
-          key: ${{ runner.os }}-buildxl-${{ hashFiles('**/*.dsc') }}
+          key: ${{ runner.os }}-buildxl-release-${{ hashFiles('**/*.dsc') }}
           path: ${{ env.DOMINO_CACHE_DIRECTORY }}
           # path: ./BuildXL/Out/Cache
           restore-keys: |
+            ${{ runner.os }}-buildxl-release-
             ${{ runner.os }}-buildxl-
 
       - name: Find the MSVC version
@@ -55,12 +59,12 @@ jobs:
 
       - name: Run bxl.cmd
         run: |
-          ./bxl.cmd -minimal
+          ./bxl.cmd -deployconfig Release -deploydev
         working-directory: ./BuildXL
         shell: pwsh
 
       - name: Upload outputs
         uses: actions/upload-artifact@v4
         with:
-          name: bin
-          path: ./BuildXL/Out/Bin
+          name: selfhost
+          path: ./BuildXL/Out/Selfhost
