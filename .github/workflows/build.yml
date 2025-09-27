@@ -43,6 +43,16 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-nuget-
 
+      - name: Cache BuildXL
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-buildxl-release-${{ hashFiles('**/*.dsc') }}
+          path: ${{ env.DOMINO_CACHE_DIRECTORY }}
+          # path: ./BuildXL/Out/Cache
+          restore-keys: |
+            ${{ runner.os }}-buildxl-release-
+            ${{ runner.os }}-buildxl-
+
       - name: Restore cache
         run: |
           $Runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,databaseId,startedAt |
@@ -53,16 +63,6 @@ jobs:
           }
         continue-on-error: true
         shell: pwsh
-
-      - name: Cache BuildXL
-        uses: actions/cache@v4
-        with:
-          key: ${{ runner.os }}-buildxl-release-${{ hashFiles('**/*.dsc') }}
-          path: ${{ env.DOMINO_CACHE_DIRECTORY }}
-          # path: ./BuildXL/Out/Cache
-          restore-keys: |
-            ${{ runner.os }}-buildxl-release-
-            ${{ runner.os }}-buildxl-
 
       - name: Find the MSVC version
         run: |
