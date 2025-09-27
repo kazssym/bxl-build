@@ -87,4 +87,5 @@ jobs:
           name: cache
           path: |
             ./BuildXL/Out/Cache/
+            !./BuildXL/Out/Cache/Shared/
             !./BuildXL/Out/Cache/**/LOG.old.*
