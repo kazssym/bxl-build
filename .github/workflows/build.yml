@@ -55,6 +55,8 @@ jobs:
 
       - name: Restore cache
         run: |
+          New-Item -Path ./BuildXL/Out/Cache
+          cd ./BuildXL/Out/Cache
           $Runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,databaseId,startedAt |
               ConvertFrom-Json
           $Runs
@@ -63,7 +65,6 @@ jobs:
               gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache
           }
           Get-ChildItem
-        working-directory: ./BuildXL/Out/Cache/
         continue-on-error: true
         shell: pwsh
 
