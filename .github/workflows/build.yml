@@ -59,11 +59,11 @@ jobs:
               ConvertFrom-Json
           $Runs
           if ($Runs.Count -gt 0) {
-              Write-Host "Downloading from $Runs[0].databaseId"
-              gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache --dir ./BuildXL/Out/Cache/
+              Write-Host "Downloading from $($Runs[0].databaseId)"
+              gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache
           }
-          Get-ChildItem -Path ./BuildXL/Out/Cache/
-          Get-ChildItem -Path ./BuildXL/Out/
+          Get-ChildItem
+        working-directory: ./BuildXL/Out/Cache/
         continue-on-error: true
         shell: pwsh
 
