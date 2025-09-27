@@ -43,9 +43,8 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-nuget-
 
-      - name: Try with GitHub CLI
+      - name: Get info for recent runs
         run: |
-          # Install-Module -Name PowerShellForGitHub
           $runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,displayTitle,startedAt |
               ConvertFrom-Json
           $runs
