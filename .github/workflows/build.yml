@@ -48,7 +48,9 @@ jobs:
           $Runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,databaseId,startedAt |
               ConvertFrom-Json
           $Runs
-          gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache --dir ./BuildXL/Out/Cache/
+          if ($Runs.Count -gt 0) {
+              gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache --dir ./BuildXL/Out/Cache/
+          }
         shell: pwsh
 
       - name: Cache BuildXL
