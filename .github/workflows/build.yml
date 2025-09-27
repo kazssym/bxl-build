@@ -46,7 +46,7 @@ jobs:
       - name: Try with GitHub CLI
         run: |
           # Install-Module -Name PowerShellForGitHub
-          $runs = gh run list --repo kazssym/bxl-build --workflow build --branch main --status success --json number,displayTitle,startedAt |
+          $runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,displayTitle,startedAt |
               ConvertFrom-Json
           $runs
         shell: pwsh
