@@ -46,7 +46,7 @@ jobs:
       - name: Try with GitHub CLI
         run: |
           # Install-Module -Name PowerShellForGitHub
-          gh run list --repo kazssym/bxl-build --workflow build --branch main --status completed
+          gh run list --repo kazssym/bxl-build --workflow build --branch main --status success
         shell: pwsh
 
       - name: Cache BuildXL
