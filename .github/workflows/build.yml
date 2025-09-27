@@ -61,10 +61,9 @@ jobs:
               ConvertFrom-Json
           $Runs
           if ($Runs.Count -gt 0) {
-              Write-Host "Downloading from $($Runs[0].databaseId)"
+              "Downloading from $($Runs[0].databaseId)"
               gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache
           }
-          Get-ChildItem
         continue-on-error: true
         shell: pwsh
 
