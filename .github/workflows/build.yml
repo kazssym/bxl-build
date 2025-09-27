@@ -43,15 +43,15 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-nuget-
 
-      - name: Cache BuildXL
-        uses: actions/cache@v4
-        with:
-          key: ${{ runner.os }}-buildxl-release-${{ hashFiles('**/*.dsc') }}
-          path: ${{ env.DOMINO_CACHE_DIRECTORY }}
-          # path: ./BuildXL/Out/Cache
-          restore-keys: |
-            ${{ runner.os }}-buildxl-release-
-            ${{ runner.os }}-buildxl-
+      # - name: Cache BuildXL
+      #   uses: actions/cache@v4
+      #   with:
+      #     key: ${{ runner.os }}-buildxl-release-${{ hashFiles('**/*.dsc') }}
+      #     path: ${{ env.DOMINO_CACHE_DIRECTORY }}
+      #     # path: ./BuildXL/Out/Cache
+      #     restore-keys: |
+      #       ${{ runner.os }}-buildxl-release-
+      #       ${{ runner.os }}-buildxl-
 
       - name: Restore cache
         run: |
