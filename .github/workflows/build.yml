@@ -48,7 +48,7 @@ jobs:
           $runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,databaseId,displayTitle,startedAt |
               ConvertFrom-Json
           $runs
-          gh run download $runs[0].databaseId --repo "${{ github.repository }}" --name cache --dir ./BuildXL/Out/Cache
+          gh run download $runs[0].databaseId --repo "${{ github.repository }}" --name cache --dir ./BuildXL/Out/Cache/
         shell: pwsh
 
       - name: Cache BuildXL
@@ -76,10 +76,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: selfhost
-          path: ./BuildXL/Out/Selfhost
+          path: ./BuildXL/Out/Selfhost/
 
       - name: Upload cache
         uses: actions/upload-artifact@v4
         with:
           name: cache
-          path: ./BuildXL/Out/Cache
+          path: ./BuildXL/Out/Cache/
