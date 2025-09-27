@@ -89,3 +89,5 @@ jobs:
           path: |
             ./BuildXL/Out/Cache/
             !./BuildXL/Out/Cache/**/LOG.old.*
+          compression-level: 9
+
