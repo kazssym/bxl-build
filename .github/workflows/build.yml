@@ -55,7 +55,7 @@ jobs:
 
       - name: Restore cache
         run: |
-          New-Item -Path ./BuildXL/Out/Cache -ItemType Directory -Force
+          New-Item -Path ./BuildXL/Out/Cache -ItemType Directory -Force | Out-Null
           cd ./BuildXL/Out/Cache
           $Runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,databaseId,startedAt |
               ConvertFrom-Json
