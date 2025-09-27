@@ -45,7 +45,8 @@ jobs:
 
       - name: Try with PowerShell
         run: |
-          Install-Module -Name PowerShellForGitHub
+          # Install-Module -Name PowerShellForGitHub
+          gh run list --repo kazssym/bxl-build
         shell: pwsh
 
       - name: Cache BuildXL
