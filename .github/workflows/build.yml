@@ -43,10 +43,10 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-nuget-
 
-      - name: Try with PowerShell
+      - name: Try with GitHub CLI
         run: |
           # Install-Module -Name PowerShellForGitHub
-          gh run list --repo kazssym/bxl-build
+          gh run list --repo kazssym/bxl-build --workflow build --branch main
         shell: pwsh
 
       - name: Cache BuildXL
