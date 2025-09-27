@@ -15,7 +15,7 @@ env:
   # Path to the NuGet global-packages folder.
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
-  DOMINO_CACHE_DIRECTORY: ${{ github.workspace }}/.bxlcache
+  # DOMINO_CACHE_DIRECTORY: ${{ github.workspace }}/.bxlcache
 
 jobs:
   build:
@@ -55,16 +55,20 @@ jobs:
 
       - name: Restore cache
         run: |
+          New-Item -Path ./BuildXL/Out/Cache -ItemType Directory -Force
+          cd ./BuildXL/Out/Cache
           $Runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,databaseId,startedAt |
               ConvertFrom-Json
           $Runs
           if ($Runs.Count -gt 0) {
-              gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache --dir ./BuildXL/Out/Cache/
+              Write-Host "Downloading from $($Runs[0].databaseId)"
+              gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache
           }
+          Get-ChildItem
         continue-on-error: true
         shell: pwsh
 
-      - name: Find the MSVC version
+      - name: Find MSVC version
         run: |
           ./Find-MsvcVersion.ps1
         shell: pwsh
@@ -75,11 +79,12 @@ jobs:
         working-directory: ./BuildXL
         shell: pwsh
 
-      - name: Upload outputs
+      - name: Upload output
         uses: actions/upload-artifact@v4
         with:
           name: selfhost
           path: ./BuildXL/Out/Selfhost/
+          compression-level: 9
 
       - name: Upload cache
         uses: actions/upload-artifact@v4
@@ -88,3 +93,5 @@ jobs:
           path: |
             ./BuildXL/Out/Cache/
             !./BuildXL/Out/Cache/**/LOG.old.*
+          compression-level: 9
+
