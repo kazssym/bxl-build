@@ -15,7 +15,7 @@ env:
   # Path to the NuGet global-packages folder.
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
-  DOMINO_CACHE_DIRECTORY: ${{ github.workspace }}/.bxlcache
+  # DOMINO_CACHE_DIRECTORY: ${{ github.workspace }}/.bxlcache
 
 jobs:
   build:
@@ -80,6 +80,7 @@ jobs:
         with:
           name: selfhost
           path: ./BuildXL/Out/Selfhost/
+          compression-level: 9
 
       - name: Upload cache
         uses: actions/upload-artifact@v4
