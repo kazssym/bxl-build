@@ -61,6 +61,7 @@ jobs:
           if ($Runs.Count -gt 0) {
               gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache --dir ./BuildXL/Out/Cache/
           }
+          Get-ChildItem -Path ./BuildXL/Out/Cache/
         continue-on-error: true
         shell: pwsh
 
@@ -75,7 +76,7 @@ jobs:
         working-directory: ./BuildXL
         shell: pwsh
 
-      - name: Upload outputs
+      - name: Upload output
         uses: actions/upload-artifact@v4
         with:
           name: selfhost
