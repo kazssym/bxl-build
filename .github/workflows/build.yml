@@ -43,6 +43,13 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-nuget-
 
+      - name: Get info for recent runs
+        run: |
+          $runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,displayTitle,startedAt |
+              ConvertFrom-Json
+          $runs
+        shell: pwsh
+
       - name: Cache BuildXL
         uses: actions/cache@v4
         with:
