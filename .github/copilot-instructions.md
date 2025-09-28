@@ -11,7 +11,7 @@ Always reference these instructions first and fallback to search or bash command
 #### Windows Environment Requirements
 - Install Windows 10+ (required for BuildXL)
 - Download and install [Visual Studio 2022 Build Tools](https://visualstudio.microsoft.com/downloads/). On the downloads page, scroll down to "All Downloads" and select "Build Tools for Visual Studio 2022".
-- In Visual Studio installer, under "Individual Components", search and install: "MSVC (v142) - VS 2022 C++ x64/x86 Spectre-mitigated libs" (version numbers may vary; install the latest available)
+- In Visual Studio installer, under "Individual Components", search and install: "MSVC (v142) - VS 2022 C++ x64/x86 Spectre-mitigated libs" (the exact version will be detected automatically by Find-MsvcVersion.ps1)
 - Install PowerShell Core 7+ (`winget install Microsoft.PowerShell`)
 
 ### Repository Structure and Bootstrap Process
@@ -30,7 +30,10 @@ Always reference these instructions first and fallback to search or bash command
    ```powershell
    .\Find-MsvcVersion.ps1
    ```
-   Sets `MSVC_VERSION` environment variable for BuildXL.
+   Sets `MSVC_VERSION` environment variable for BuildXL automatically. For manual builds without the script, set the environment variable manually:
+   ```powershell
+   $env:MSVC_VERSION = "14.XX.XXXXX"  # Replace with your installed MSVC version
+   ```
 
 2. **Minimal BuildXL Build** (45-60 minutes):
    ```cmd
