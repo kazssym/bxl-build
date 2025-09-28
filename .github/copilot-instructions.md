@@ -10,7 +10,7 @@ Always reference these instructions first and fallback to search or bash command
 
 #### Windows Environment (Primary)
 - Install Windows 10+ (required for BuildXL)
-- Install [Visual Studio 2022 Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe)
+- Download and install [Visual Studio 2022 Build Tools](https://visualstudio.microsoft.com/downloads/). On the downloads page, scroll down to "All Downloads" and select "Build Tools for Visual Studio 2022".
 - In Visual Studio installer, under "Individual Components", search and install: "MSVC (v142) - VS 2022 C++ x64/x86 Spectre-mitigated libs (v14.28-16.8)"
 - Install PowerShell Core 7+ (`winget install Microsoft.PowerShell`)
 
