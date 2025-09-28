@@ -125,7 +125,7 @@ After making changes, always validate:
 - Runs on `windows-2022` runner
 - Creates USN journal: `fsutil usn createjournal m=0x20000000 a=0x8000000 D:`
 - Clones microsoft/BuildXL to `./BuildXL/`
-- Caches BuildXL build outputs in `.bxlcache`
+- Caches BuildXL build outputs in `BuildXL/Out/Cache`
 - Uploads build artifacts from `./BuildXL/Out/Bin`
 
 ### Critical Reminders
