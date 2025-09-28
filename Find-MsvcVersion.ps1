@@ -19,6 +19,7 @@ $VERSION = (Get-ChildItem -Path "${VSINSTALLDIR}VC\Tools\MSVC\" | Sort-Object -P
 
 Write-Host "MSVC_VERSION=$VERSION"
 if ($env:GITHUB_ENV) {
+    #Requires -Version 6
     "MSVC_VERSION=$VERSION" >> $env:GITHUB_ENV
 }
 
