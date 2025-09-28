@@ -59,9 +59,10 @@ jobs:
           cd ./BuildXL/Out/Cache
           $Runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,databaseId,startedAt |
               ConvertFrom-Json
-          $Runs
+          Write-Host $Runs
           if ($Runs.Count -gt 0) {
-              "Downloading from $($Runs[0].databaseId)"
+              Write-Host ""
+              Write-Host "Downloading from $($Runs[0].databaseId)"
               gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache
           }
         continue-on-error: true
