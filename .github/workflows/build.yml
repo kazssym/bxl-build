@@ -55,14 +55,14 @@ jobs:
 
       - name: Restore cache
         run: |
-          New-Item -Path ./BuildXL/Out/Cache -ItemType Directory -Force | Out-Null
-          cd ./BuildXL/Out/Cache
+          New-Item -Path ./BuildXL/Out/Cache/Shared -ItemType Directory -Force | Out-Null
+          cd ./BuildXL/Out/Cache/Shared
           $Runs = gh run list --repo "${{ github.repository }}" --workflow build --status success --json number,databaseId,startedAt |
               ConvertFrom-Json
           $Runs
           if ($Runs.Count -gt 0) {
               "Downloading from $($Runs[0].databaseId)"
-              gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache
+              gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name sharedcache
           }
         continue-on-error: true
         shell: pwsh
