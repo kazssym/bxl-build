@@ -54,7 +54,7 @@ The repository includes a comprehensive GitHub Actions workflow (`build.yml`) th
 
 - **Operating System**: Windows (tested on Windows Server 2022)
 - **PowerShell**: Version 6 or later (for GitHub Actions integration)
-- **Visual Studio**: Version 17.x or 18.x with MSVC toolset
+- **Visual Studio**: Version 17.x with MSVC toolset
 - **BuildXL**: Automatically checked out from Microsoft's repository
 
 ## Usage
