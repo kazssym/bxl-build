@@ -1,4 +1,4 @@
----
+２---
 name: Build
 
 on:
@@ -92,5 +92,14 @@ jobs:
           path: |
             ./BuildXL/Out/Cache/
             !./BuildXL/Out/Cache/**/LOG.old.*
+          compression-level: 9
+
+      - name: Upload sharedcache
+        uses: actions/upload-artifact@v4
+        with:
+          name: sharedcache
+          path: |
+            ./BuildXL/Out/Cache/Shared
+            !./BuildXL/Out/Cache/Shared/**/LOG.old.*
           compression-level: 9
 
