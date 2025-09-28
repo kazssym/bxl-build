@@ -24,7 +24,7 @@ A PowerShell script that automatically detects the installed MSVC version and se
 **Features:**
 - Checks for existing `MSVC_VERSION` environment variable
 - Uses `vswhere.exe` to locate Visual Studio installations
-- Finds the latest MSVC toolset version
+- Finds the latest MSVC toolset version from Visual Studio 2022
 - Sets environment variable for GitHub Actions
 
 **Usage:**
