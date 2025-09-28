@@ -30,9 +30,9 @@ Always reference these instructions first and fallback to search or bash command
    ```powershell
    .\Find-MsvcVersion.ps1
    ```
-   Sets `MSVC_VERSION` environment variable for BuildXL automatically. For manual builds without the script, set the environment variable manually:
+   Sets `MSVC_VERSION` environment variable for BuildXL automatically and displays the detected version. For manual builds, use the displayed version output to set the environment variable manually:
    ```powershell
-   $env:MSVC_VERSION = "14.XX.XXXXX"  # Replace with your installed MSVC version
+   $env:MSVC_VERSION = "14.XX.XXXXX"  # Use the version shown by Find-MsvcVersion.ps1
    ```
 
 2. **Minimal BuildXL Build** (45-60 minutes):
