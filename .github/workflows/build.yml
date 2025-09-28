@@ -61,6 +61,7 @@ jobs:
               ConvertFrom-Json
           $Runs
           if ($Runs.Count -gt 0) {
+              ""
               "Downloading from $($Runs[0].databaseId)"
               gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache
           }
