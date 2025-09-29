@@ -61,7 +61,7 @@ jobs:
               ConvertFrom-Json
           $Runs | Format-Table
           if ($Runs.Count -gt 0) {
-              Write-Output "`nDownloading from $($Runs[0].databaseId)"
+              Write-Output "Downloading from $($Runs[0].databaseId)"
               gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache
           }
         continue-on-error: true
