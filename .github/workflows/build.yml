@@ -71,6 +71,7 @@ jobs:
         shell: pwsh
 
       - name: Upload output
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: actions/upload-artifact@v4
         with:
           name: selfhost
