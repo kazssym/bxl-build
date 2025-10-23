@@ -74,7 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: selfhost
-          path: ./BuildXL/Out/Selfhost/
+          path: ./BuildXL/Out/Selfhost/Dev/
           compression-level: 9
 
       - name: Upload cache
