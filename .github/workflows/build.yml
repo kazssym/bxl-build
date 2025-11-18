@@ -40,15 +40,15 @@ jobs:
       #   with:
       #     key: ${{ runner.os }}-buildxl-release-${{ hashFiles('**/*.dsc') }}
       #     path: ${{ env.DOMINO_CACHE_DIRECTORY }}
-      #     # path: ./BuildXL/Out/Cache
+      #     # path: BuildXL/Out/Cache
       #     restore-keys: |
       #       ${{ runner.os }}-buildxl-release-
       #       ${{ runner.os }}-buildxl-
 
       - name: Restore cache
         run: |
-          New-Item -Path ./BuildXL/Out/Cache -ItemType Directory -Force | Out-Null
-          cd ./BuildXL/Out/Cache
+          New-Item -Path BuildXL/Out/Cache -ItemType Directory -Force | Out-Null
+          cd BuildXL/Out/Cache
           $Runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,databaseId,startedAt |
               ConvertFrom-Json
           $Runs | Format-Table
@@ -67,14 +67,14 @@ jobs:
       - name: Run bxl.cmd
         run: |
           ./bxl.cmd -deployconfig Release -deploydev
-        working-directory: ./BuildXL
+        working-directory: BuildXL
         shell: pwsh
 
       - name: Upload output
         uses: actions/upload-artifact@v4
         with:
           name: selfhost
-          path: ./BuildXL/Out/Selfhost/Dev/
+          path: BuildXL/Out/Selfhost/Dev/
           compression-level: 9
 
       - name: Upload cache
@@ -83,7 +83,7 @@ jobs:
         with:
           name: cache
           path: |
-            ./BuildXL/Out/Cache/
-            !./BuildXL/Out/Cache/**/LOG.old.*
+            BuildXL/Out/Cache/
+            !BuildXL/Out/Cache/**/LOG.old.*
           compression-level: 9
 
