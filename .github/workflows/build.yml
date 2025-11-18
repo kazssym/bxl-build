@@ -87,3 +87,8 @@ jobs:
             !./BuildXL/Out/Cache/**/LOG.old.*
           compression-level: 9
 
+      - name: Upload config
+        uses: actions/upload-artifact@v4
+        with:
+          name: config
+          path: BuildXL/Out/Cache/CacheCore.json
