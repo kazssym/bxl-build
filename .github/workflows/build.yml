@@ -31,6 +31,11 @@ jobs:
           repository: microsoft/BuildXL
           path: BuildXL
 
+      - name: Modify cache config
+        run: |
+          Modify-Config.ps1 BuildXL/BuildCacheOverride.json
+        shell: pwsh
+
       - name: Create USN journal
         run: |
           fsutil usn createjournal m=0x20000000 a=0x8000000 D:
