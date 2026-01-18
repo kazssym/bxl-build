@@ -20,6 +20,6 @@ if (-not (Test-Path -Path $Path)) {
 
 $Content = Get-Content -Path $Path
 
-$Content -replace "MaxCacheSizeInMB\s*=\s*\d+;", "MaxCacheSizeInMB = 10240;" | Set-Content -Path $Path
+$Content -replace "MaxCacheSizeInMB\s*=\s*\d+;", "MaxCacheSizeInMB = 1024;" | Set-Content -Path $Path
 
 exit 0
