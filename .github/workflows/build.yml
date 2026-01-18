@@ -31,7 +31,7 @@ jobs:
           repository: microsoft/BuildXL
           path: BuildXL
 
-      - name: Modify cache config
+      - name: Modify bxl.ps1 for smaller cache size
         run: |
           ./Modify-Script.ps1 -Path BuildXL/Shared/Scripts/bxl.ps1
         shell: pwsh
@@ -80,7 +80,6 @@ jobs:
         with:
           name: selfhost
           path: BuildXL/Out/Selfhost/Dev/
-          compression-level: 9
 
       - name: Upload cache
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -90,5 +89,3 @@ jobs:
           path: |
             BuildXL/Out/Cache/
             !BuildXL/Out/Cache/**/LOG.old.*
-          compression-level: 9
-
