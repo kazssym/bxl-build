@@ -15,6 +15,7 @@ param(
 )
 
 if (-not (Test-Path -Path $Path)) {
+    Write-Error "The specified path '$Path' was not found."
     exit 1
 }
 
