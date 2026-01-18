@@ -33,7 +33,7 @@ jobs:
 
       - name: Modify cache config
         run: |
-          Modify-Config.ps1 BuildXL/BuildCacheOverride.json
+          ./Modify-Config.ps1 BuildXL/BuildCacheOverride.json
         shell: pwsh
 
       - name: Create USN journal
