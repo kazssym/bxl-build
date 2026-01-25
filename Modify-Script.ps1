@@ -1,5 +1,5 @@
-# Find-MsvcVersion.ps1 (for GitHub Actions)
-# Copyright 2025 Linuxfront.com
+# Modify-Script.ps1
+# Copyright 2026 Linuxfront.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 #
@@ -9,20 +9,18 @@
 #
 # SPDX-License-Identifier: MIT
 
-if ($env:MSVC_VERSION) {
-    exit 0
+param(
+    [Parameter(Mandatory)]
+    [string]$Path
+)
+
+if (-not (Test-Path -Path $Path)) {
+    Write-Error "The specified path '$Path' was not found."
+    exit 1
 }
 
-$VSWHERE = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
+$Content = Get-Content -Path $Path
 
-$VSINSTALLDIR = (& $VSWHERE -version "[17,18)" -property "installationPath") + "\"
-
-$VERSION = (Get-ChildItem -Path "${VSINSTALLDIR}VC\Tools\MSVC\" | Sort-Object -Property Name -Descending | Select-Object -First 1).Name
-
-Write-Host "MSVC_VERSION=$VERSION"
-if ($env:GITHUB_ENV) {
-    #Requires -Version 6
-    "MSVC_VERSION=$VERSION" >> $env:GITHUB_ENV
-}
+$Content -replace 'MaxCacheSizeInMB\s*=\s*\d+', 'MaxCacheSizeInMB = 4096' | Set-Content -Path $Path
 
 exit 0

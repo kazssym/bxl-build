@@ -40,5 +40,5 @@
 # debug information files
 *.dwo
 
-# Subrepository
+# BuildXL repository (cloned during CI)
 BuildXL/

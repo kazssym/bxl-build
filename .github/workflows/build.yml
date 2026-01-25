@@ -11,10 +11,11 @@ on:
     - cron: "30 5 * * 6"
 
 env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # Path to the NuGet global-packages folder.
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
-  DOMINO_CACHE_DIRECTORY: ${{ github.workspace }}/.bxlcache
+  # DOMINO_CACHE_DIRECTORY: ${{ github.workspace }}/.bxlcache
 
 jobs:
   build:
@@ -23,12 +24,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-
       - name: Checkout microsoft/BuildXL
         uses: actions/checkout@v5
         with:
           repository: microsoft/BuildXL
           path: BuildXL
+
+      - name: Modify bxl.ps1 for smaller cache size
+        run: |
+          ./Modify-Script.ps1 -Path BuildXL/Shared/Scripts/bxl.ps1
+        shell: pwsh
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -39,25 +44,31 @@ jobs:
         run: |
           fsutil usn createjournal m=0x20000000 a=0x8000000 D:
 
-      # - name: Cache NuGet packages
+      # - name: Cache BuildXL
       #   uses: actions/cache@v4
       #   with:
-      #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.dsc') }}
-      #     path: ${{ env.NUGET_PACKAGES }}
+      #     key: ${{ runner.os }}-buildxl-release-${{ hashFiles('**/*.dsc') }}
+      #     path: ${{ env.DOMINO_CACHE_DIRECTORY }}
+      #     # path: BuildXL/Out/Cache
       #     restore-keys: |
-      #       ${{ runner.os }}-nuget-
+      #       ${{ runner.os }}-buildxl-release-
+      #       ${{ runner.os }}-buildxl-
 
-      - name: Cache BuildXL
-        uses: actions/cache@v4
-        with:
-          key: ${{ runner.os }}-buildxl-release-${{ hashFiles('**/*.dsc') }}
-          path: ${{ env.DOMINO_CACHE_DIRECTORY }}
-          # path: ./BuildXL/Out/Cache
-          restore-keys: |
-            ${{ runner.os }}-buildxl-release-
-            ${{ runner.os }}-buildxl-
+      - name: Restore cache
+        run: |
+          New-Item -Path BuildXL/Out/Cache -ItemType Directory -Force | Out-Null
+          cd BuildXL/Out/Cache
+          $Runs = gh run list --repo "${{ github.repository }}" --workflow build --branch main --status success --json number,databaseId,startedAt |
+              ConvertFrom-Json
+          $Runs | Format-Table
+          if ($Runs.Count -gt 0) {
+              Write-Output "Downloading from $($Runs[0].databaseId)"
+              gh run download $Runs[0].databaseId --repo "${{ github.repository }}" --name cache
+          }
+        continue-on-error: true
+        shell: pwsh
 
-      - name: Find the MSVC version
+      - name: Find MSVC version
         run: |
           ./Find-MsvcVersion.ps1
         shell: pwsh
@@ -65,11 +76,20 @@ jobs:
       - name: Run bxl.cmd
         run: |
           ./bxl.cmd -deployconfig Release -deploydev
-        working-directory: ./BuildXL
+        working-directory: BuildXL
         shell: pwsh
 
-      - name: Upload outputs
+      - name: Upload output
         uses: actions/upload-artifact@v4
         with:
           name: selfhost
-          path: ./BuildXL/Out/Selfhost
+          path: BuildXL/Out/Selfhost/Dev/
+
+      - name: Upload cache
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: cache
+          path: |
+            BuildXL/Out/Cache/
+            !BuildXL/Out/Cache/**/LOG.old.*
