@@ -24,7 +24,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-
       - name: Checkout microsoft/BuildXL
         uses: actions/checkout@v5
         with:
@@ -35,6 +34,11 @@ jobs:
         run: |
           ./Modify-Script.ps1 -Path BuildXL/Shared/Scripts/bxl.ps1
         shell: pwsh
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "8"
 
       - name: Create USN journal
         run: |
