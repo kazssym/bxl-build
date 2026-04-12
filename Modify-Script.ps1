@@ -21,6 +21,6 @@ if (-not (Test-Path -Path $Path)) {
 
 $Content = Get-Content -Path $Path -Raw
 
-$Content -replace 'MaxCacheSizeInMB\s*=\s*\d+', 'MaxCacheSizeInMB = 3072' | Set-Content -Path $Path -Encoding UTF8
+$Content -replace 'MaxCacheSizeInMB\s*=\s*\d+', 'MaxCacheSizeInMB = 2560' | Set-Content -Path $Path -Encoding UTF8
 
 exit 0
